@@ -3,7 +3,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driving Licence Generator</title>
-    <!-- Librería para convertir la tarjeta en imagen -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
@@ -90,7 +89,7 @@
             font-weight: bold;
         }
 
-        /* --- DISEÑO IDÉNTICO DE LA TARJETA --- */
+        /* --- CREDENCIAL IDÉNTICA A LA REFERENCIA --- */
         .card-preview-container {
             display: flex;
             justify-content: center;
@@ -98,49 +97,55 @@
         }
 
         .id-card {
-            width: 340px;
-            height: 210px;
-            /* Fondo azulado degradado con textura simulada */
-            background: linear-gradient(135deg, #a4c2f4 0%, #d8e5f8 50%, #8ab4f8 100%);
-            border: 2px solid #3a506b;
+            width: 350px;
+            height: 220px;
+            background: linear-gradient(135deg, #b8d2f5 0%, #ffffff 60%, #9bc2ef 100%);
+            border: 2px solid #2c3e50;
             border-radius: 12px;
             padding: 10px;
             box-sizing: border-box;
             position: relative;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
             overflow: hidden;
         }
 
-        /* Sello de VERIFIED al fondo de la tarjeta */
-        .verified-stamp {
+        /* Capa de tramas de seguridad de fondo (líneas finas simulando patrones de seguridad) */
+        .security-pattern {
             position: absolute;
-            right: 10px;
-            bottom: 15px;
-            width: 110px;
-            height: 110px;
-            border: 2px dashed rgba(53, 91, 153, 0.4);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(53, 91, 153, 0.35);
-            font-weight: bold;
-            font-size: 14px;
-            transform: rotate(-25deg);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(45deg, rgba(44, 62, 80, 0.04) 0, rgba(44, 62, 80, 0.04) 1px, transparent 0, transparent 50%),
+                              radial-gradient(circle at 80% 80%, rgba(41, 128, 185, 0.15) 0%, transparent 60%);
             pointer-events: none;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            box-shadow: inset 0 0 10px rgba(53, 91, 153, 0.2);
+            z-index: 1;
+        }
+
+        /* Sello de VERIFIED con círculo de estrellas idéntico a la referencia */
+        .verified-seal {
+            position: absolute;
+            right: -10px;
+            bottom: -15px;
+            width: 130px;
+            height: 130px;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.65;
+        }
+
+        .id-title-bar {
+            position: relative;
+            z-index: 3;
+            border-bottom: 2px solid #1a252f;
+            padding-bottom: 3px;
+            margin-bottom: 8px;
         }
 
         .id-title {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
-            text-align: left;
-            border-bottom: 1.5px solid #222;
-            padding-bottom: 2px;
-            margin-bottom: 8px;
-            color: #111;
+            color: #1a252f;
             letter-spacing: 0.5px;
         }
 
@@ -153,26 +158,27 @@
             display: flex;
             gap: 10px;
             position: relative;
-            z-index: 2;
+            z-index: 3;
         }
 
         .id-photo {
-            width: 75px;
-            height: 95px;
-            background: #cccccc;
-            border: 1px solid #444;
+            width: 78px;
+            height: 98px;
+            background: #dcdcdc;
+            border: 1.5px solid #2c3e50;
             object-fit: cover;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 10px;
-            color: #444;
+            color: #555;
             text-align: center;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
         }
 
         .id-details {
             font-size: 11px;
-            color: #1a1a1a;
+            color: #111;
             line-height: 1.4;
             flex: 1;
         }
@@ -265,8 +271,27 @@
         
         <div class="card-preview-container">
             <div class="id-card" id="cardCapture">
-                <div class="verified-stamp">VERIFIED</div>
-                <div class="id-title">DRIVER LICENSE <span>INTERNATIONAL</span></div>
+                <!-- Patrón de seguridad de fondo -->
+                <div class="security-pattern"></div>
+
+                <!-- Sello circular de VERIFIED con diseño de estrellas idéntico -->
+                <svg class="verified-seal" viewBox="0 0 120 120">
+                    <defs>
+                        <path id="circlePath" d="M 15, 60 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" />
+                    </defs>
+                    <circle cx="60" cy="60" r="48" fill="none" stroke="#2980b9" stroke-width="1.5" stroke-dasharray="3,3" />
+                    <circle cx="60" cy="60" r="42" fill="none" stroke="#2980b9" stroke-width="1" />
+                    <!-- Estrellas decorativas alrededor del sello -->
+                    <text font-size="10" fill="#2980b9" font-weight="bold">
+                        <textPath href="#circlePath" startOffset="0%">★ VERIFIED ★ VERIFIED ★ VERIFIED</textPath>
+                    </text>
+                    <text x="60" y="64" font-size="13" font-weight="bold" fill="#2980b9" text-anchor="middle" letter-spacing="1.5" transform="rotate(-15 60 60)">VERIFIED</text>
+                </svg>
+
+                <div class="id-title-bar">
+                    <div class="id-title">DRIVER LICENSE <span>INTERNATIONAL</span></div>
+                </div>
+
                 <div class="id-content">
                     <div id="photoContainer" class="id-photo">Sin foto</div>
                     <div class="id-details">
@@ -274,7 +299,7 @@
                         <div><strong>DOB:</strong> <span id="prevDob"></span></div>
                         <div><strong>Address:</strong> <span id="prevAddress"></span></div>
                         <div><strong>Mobile No:</strong> <span id="prevMobile"></span></div>
-                        <div style="margin-top: 6px;"><strong>Country:</strong> <span id="prevCountry"></span></div>
+                        <div style="margin-top: 4px;"><strong>Country:</strong> <span id="prevCountry"></span></div>
                         <div><strong>Issue:</strong> <span id="prevIssue"></span></div>
                         <div><strong>Expiry:</strong> <span id="prevExpiry"></span></div>
                     </div>
@@ -291,7 +316,6 @@
 <script>
     let uploadedPhotoUrl = '';
 
-    // Capturar correctamente la imagen seleccionada de la galería
     document.getElementById('inputPhoto').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
