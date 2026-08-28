@@ -59,7 +59,7 @@
             font-size: 14px;
             margin-bottom: 5px;
         }
-        .form-group input {
+        .form-group input[type="text"] {
             width: 100%;
             border: none;
             border-bottom: 1px solid #d965a0;
@@ -67,6 +67,22 @@
             padding: 5px 0;
             font-size: 16px;
             outline: none;
+        }
+
+        /* Estilo especial para el selector de archivo/galería */
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload-wrapper input[type=file] {
+            font-size: 14px;
+            color: #555;
+            padding: 5px 0;
+            width: 100%;
+            cursor: pointer;
         }
 
         .btn-primary {
@@ -118,15 +134,26 @@
         .id-photo {
             width: 70px;
             height: 85px;
-            background: #ccc;
+            background: #dcdcdc;
             border: 1px solid #333;
             object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #555;
+            text-align: center;
         }
 
         .id-details {
             font-size: 11px;
             color: #111;
-            line-height: 1.4;
+            line-height: 1.3;
+            flex: 1;
+        }
+
+        .id-details div {
+            margin-bottom: 2px;
         }
 
         /* Botón Circular Único */
@@ -193,8 +220,10 @@
                 <input type="text" id="inputExpiry" required placeholder="01/01/2030">
             </div>
             <div class="form-group">
-                <label>Foto de perfil</label>
-                <input type="file" id="inputPhoto" accept="image/*">
+                <label>Foto de perfil (Galería)</label>
+                <div class="file-upload-wrapper">
+                    <input type="file" id="inputPhoto" accept="image/*">
+                </div>
             </div>
             <button type="submit" class="btn-primary">DONE</button>
         </form>
@@ -209,15 +238,15 @@
             <div class="id-card" id="cardCapture">
                 <div class="id-title">DRIVER LICENSE INTERNATIONAL</div>
                 <div class="id-content">
-                    <img id="previewPhoto" class="id-photo" src="" alt="Foto">
+                    <div id="photoContainer" class="id-photo">Sin foto</div>
                     <div class="id-details">
                         <div><strong>Name:</strong> <span id="prevName"></span></div>
                         <div><strong>DOB:</strong> <span id="prevDob"></span></div>
                         <div><strong>Address:</strong> <span id="prevAddress"></span></div>
                         <div><strong>Mobile No:</strong> <span id="prevMobile"></span></div>
-                        <br>
                         <div><strong>Country:</strong> <span id="prevCountry"></span></div>
-                        <div><strong>Issue:</strong> <span id="prevIssue"></span> <strong>Expiry:</strong> <span id="prevExpiry"></span></div>
+                        <div><strong>Issue:</strong> <span id="prevIssue"></span></div>
+                        <div><strong>Expiry:</strong> <span id="prevExpiry"></span></div>
                     </div>
                 </div>
             </div>
@@ -233,7 +262,7 @@
     let uploadedPhotoUrl = '';
 
     document.getElementById('inputPhoto').addEventListener('change', function(e) {
-        const file = e.target.files0;
+        const file = e.target.files[0];
         if (file) {
             uploadedPhotoUrl = URL.createObjectURL(file);
         }
@@ -250,8 +279,12 @@
         document.getElementById('prevIssue').innerText = document.getElementById('inputIssue').value;
         document.getElementById('prevExpiry').innerText = document.getElementById('inputExpiry').value;
         
-        const imgElement = document.getElementById('previewPhoto');
-        imgElement.src = uploadedPhotoUrl || 'https://via.placeholder.com/70x85';
+        const photoContainer = document.getElementById('photoContainer');
+        if (uploadedPhotoUrl) {
+            photoContainer.innerHTML = `<img src="${uploadedPhotoUrl}" style="width:100%; height:100%; object-fit:cover;">`;
+        } else {
+            photoContainer.innerHTML = "Sin foto";
+        }
 
         document.getElementById('screen-form').classList.remove('active');
         document.getElementById('screen-preview').classList.add('active');
