@@ -3,7 +3,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driving Licence Generator</title>
-    <!-- Librería para convertir la tarjeta en imagen -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
@@ -130,21 +129,21 @@
             line-height: 1.4;
         }
 
-        /* Botones Circulares Inferiores */
+        /* Botón Circular Único */
         .action-buttons {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             margin-top: 40px;
         }
 
         .circle-btn {
-            width: 75px;
-            height: 75px;
+            width: 85px;
+            height: 85px;
             border-radius: 50%;
             background-color: #92d050;
             color: white;
             border: none;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             display: flex;
@@ -162,7 +161,6 @@
 <body>
 
 <div class="container">
-    <!-- PANTALLA 1: FORMULARIO -->
     <div id="screen-form" class="screen active">
         <div class="header">Driving Licence</div>
         <form id="licenseForm">
@@ -202,14 +200,12 @@
         </form>
     </div>
 
-    <!-- PANTALLA 2: VISTA PREVIA Y GUARDAR -->
     <div id="screen-preview" class="screen">
         <div class="header">
             <span onclick="goBack()">←</span> Save Image
         </div>
         
         <div class="card-preview-container">
-            <!-- Esta es la tarjeta que se convertirá en imagen -->
             <div class="id-card" id="cardCapture">
                 <div class="id-title">DRIVER LICENSE INTERNATIONAL</div>
                 <div class="id-content">
@@ -229,8 +225,6 @@
 
         <div class="action-buttons">
             <button class="circle-btn" onclick="saveImage()">Save</button>
-            <button class="circle-btn" onclick="shareImage()">Share</button>
-            <button class="circle-btn" onclick="rateApp()">Rate</button>
         </div>
     </div>
 </div>
@@ -238,19 +232,16 @@
 <script>
     let uploadedPhotoUrl = '';
 
-    // Manejar la carga de la foto
     document.getElementById('inputPhoto').addEventListener('change', function(e) {
-        const file = e.target.files[0];
+        const file = e.target.files0;
         if (file) {
             uploadedPhotoUrl = URL.createObjectURL(file);
         }
     });
 
-    // Pasar del formulario a la tarjeta
     document.getElementById('licenseForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Rellenar datos en la tarjeta
         document.getElementById('prevName').innerText = document.getElementById('inputName').value;
         document.getElementById('prevDob').innerText = document.getElementById('inputDob').value;
         document.getElementById('prevAddress').innerText = document.getElementById('inputAddress').value;
@@ -262,7 +253,6 @@
         const imgElement = document.getElementById('previewPhoto');
         imgElement.src = uploadedPhotoUrl || 'https://via.placeholder.com/70x85';
 
-        // Cambiar pantallas
         document.getElementById('screen-form').classList.remove('active');
         document.getElementById('screen-preview').classList.add('active');
     });
@@ -272,7 +262,6 @@
         document.getElementById('screen-form').classList.add('active');
     }
 
-    // Funcionalidad del botón Save (Genera la imagen descargable)
     function saveImage() {
         const card = document.getElementById('cardCapture');
         html2canvas(card, { scale: 3 }).then(canvas => {
@@ -282,31 +271,7 @@
             link.click();
         });
     }
-
-    // Funcionalidad del botón Share (Usa la Web Share API si el navegador lo soporta)
-    function shareImage() {
-        const card = document.getElementById('cardCapture');
-        html2canvas(card, { scale: 2 }).then(canvas => {
-            canvas.toBlob(blob => {
-                const file = new File([blob], 'licencia.png', { type: 'image/png' });
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    navigator.share({
-                        files: [file],
-                        title: 'Driving Licence',
-                        text: 'Mi licencia internacional generada.'
-                    }).catch(console.error);
-                } else {
-                    alert('La función de compartir no está soportada en este navegador. Usa el botón Guardar.');
-                }
-            });
-        });
-    }
-
-    function rateApp() {
-        alert('¡Gracias por calificar la aplicación! ⭐⭐⭐⭐⭐');
-    }
 </script>
 
 </body>
 </html>
-
