@@ -1,0 +1,312 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driving Licence Generator</title>
+    <!-- Librería para convertir la tarjeta en imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e2f0d9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: #e2f0d9;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            background-color: #70ad47;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            border-radius: 5px 5px 0 0;
+            margin: -20px -20px 20px -20px;
+        }
+
+        .header span {
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        /* Pantallas */
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        /* Estilos Formulario */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            color: #d965a0;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #d965a0;
+            background: transparent;
+            padding: 5px 0;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .btn-primary {
+            background-color: #70ad47;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        /* Estilos Tarjeta de Licencia */
+        .card-preview-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .id-card {
+            width: 320px;
+            height: 200px;
+            background: linear-gradient(135deg, #a4c2f4 0%, #ffffff 100%);
+            border: 2px solid #555;
+            border-radius: 10px;
+            padding: 10px;
+            box-sizing: border-box;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .id-title {
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 3px;
+            margin-bottom: 8px;
+        }
+
+        .id-content {
+            display: flex;
+            gap: 10px;
+        }
+
+        .id-photo {
+            width: 70px;
+            height: 85px;
+            background: #ccc;
+            border: 1px solid #333;
+            object-fit: cover;
+        }
+
+        .id-details {
+            font-size: 11px;
+            color: #111;
+            line-height: 1.4;
+        }
+
+        /* Botones Circulares Inferiores */
+        .action-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+        }
+
+        .circle-btn {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background-color: #92d050;
+            color: white;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .circle-btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- PANTALLA 1: FORMULARIO -->
+    <div id="screen-form" class="screen active">
+        <div class="header">Driving Licence</div>
+        <form id="licenseForm">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="inputName" required placeholder="Ej. Jose Lopez">
+            </div>
+            <div class="form-group">
+                <label>Date of Birth</label>
+                <input type="text" id="inputDob" required placeholder="DD/MM/YYYY">
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" id="inputAddress" required placeholder="Street 23 St">
+            </div>
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="text" id="inputMobile" required placeholder="5322362536">
+            </div>
+            <div class="form-group">
+                <label>Country</label>
+                <input type="text" id="inputCountry" required placeholder="München">
+            </div>
+            <div class="form-group">
+                <label>Issue Date</label>
+                <input type="text" id="inputIssue" required placeholder="01/01/2025">
+            </div>
+            <div class="form-group">
+                <label>Expiry Date</label>
+                <input type="text" id="inputExpiry" required placeholder="01/01/2030">
+            </div>
+            <div class="form-group">
+                <label>Foto de perfil</label>
+                <input type="file" id="inputPhoto" accept="image/*">
+            </div>
+            <button type="submit" class="btn-primary">DONE</button>
+        </form>
+    </div>
+
+    <!-- PANTALLA 2: VISTA PREVIA Y GUARDAR -->
+    <div id="screen-preview" class="screen">
+        <div class="header">
+            <span onclick="goBack()">←</span> Save Image
+        </div>
+        
+        <div class="card-preview-container">
+            <!-- Esta es la tarjeta que se convertirá en imagen -->
+            <div class="id-card" id="cardCapture">
+                <div class="id-title">DRIVER LICENSE INTERNATIONAL</div>
+                <div class="id-content">
+                    <img id="previewPhoto" class="id-photo" src="" alt="Foto">
+                    <div class="id-details">
+                        <div><strong>Name:</strong> <span id="prevName"></span></div>
+                        <div><strong>DOB:</strong> <span id="prevDob"></span></div>
+                        <div><strong>Address:</strong> <span id="prevAddress"></span></div>
+                        <div><strong>Mobile No:</strong> <span id="prevMobile"></span></div>
+                        <br>
+                        <div><strong>Country:</strong> <span id="prevCountry"></span></div>
+                        <div><strong>Issue:</strong> <span id="prevIssue"></span> <strong>Expiry:</strong> <span id="prevExpiry"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="circle-btn" onclick="saveImage()">Save</button>
+            <button class="circle-btn" onclick="shareImage()">Share</button>
+            <button class="circle-btn" onclick="rateApp()">Rate</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let uploadedPhotoUrl = '';
+
+    // Manejar la carga de la foto
+    document.getElementById('inputPhoto').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            uploadedPhotoUrl = URL.createObjectURL(file);
+        }
+    });
+
+    // Pasar del formulario a la tarjeta
+    document.getElementById('licenseForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Rellenar datos en la tarjeta
+        document.getElementById('prevName').innerText = document.getElementById('inputName').value;
+        document.getElementById('prevDob').innerText = document.getElementById('inputDob').value;
+        document.getElementById('prevAddress').innerText = document.getElementById('inputAddress').value;
+        document.getElementById('prevMobile').innerText = document.getElementById('inputMobile').value;
+        document.getElementById('prevCountry').innerText = document.getElementById('inputCountry').value;
+        document.getElementById('prevIssue').innerText = document.getElementById('inputIssue').value;
+        document.getElementById('prevExpiry').innerText = document.getElementById('inputExpiry').value;
+        
+        const imgElement = document.getElementById('previewPhoto');
+        imgElement.src = uploadedPhotoUrl || 'https://via.placeholder.com/70x85';
+
+        // Cambiar pantallas
+        document.getElementById('screen-form').classList.remove('active');
+        document.getElementById('screen-preview').classList.add('active');
+    });
+
+    function goBack() {
+        document.getElementById('screen-preview').classList.remove('active');
+        document.getElementById('screen-form').classList.add('active');
+    }
+
+    // Funcionalidad del botón Save (Genera la imagen descargable)
+    function saveImage() {
+        const card = document.getElementById('cardCapture');
+        html2canvas(card, { scale: 3 }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'driving-licence.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+
+    // Funcionalidad del botón Share (Usa la Web Share API si el navegador lo soporta)
+    function shareImage() {
+        const card = document.getElementById('cardCapture');
+        html2canvas(card, { scale: 2 }).then(canvas => {
+            canvas.toBlob(blob => {
+                const file = new File([blob], 'licencia.png', { type: 'image/png' });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        files: [file],
+                        title: 'Driving Licence',
+                        text: 'Mi licencia internacional generada.'
+                    }).catch(console.error);
+                } else {
+                    alert('La función de compartir no está soportada en este navegador. Usa el botón Guardar.');
+                }
+            });
+        });
+    }
+
+    function rateApp() {
+        alert('¡Gracias por calificar la aplicación! ⭐⭐⭐⭐⭐');
+    }
+</script>
+
+</body>
+</html>
+
