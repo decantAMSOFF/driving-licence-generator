@@ -5,7 +5,7 @@
     <title>Driving Licence Generator</title>
     <!-- Librería para convertir la tarjeta en imagen -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- Fuente manuscrita similar a la de la referencia -->
+    <!-- Fuente manuscrita idéntica -->
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -92,7 +92,7 @@
             font-weight: bold;
         }
 
-        /* --- CREDENCIAL IDÉNTICA A LA REFERENCIA --- */
+        /* --- TARJETA IDÉNTICA A LA REFERENCIA --- */
         .card-preview-container {
             display: flex;
             justify-content: center;
@@ -102,50 +102,63 @@
         .id-card {
             width: 360px;
             height: 225px;
-            /* Usamos la textura gráfica exacta de fondo de la tarjeta de referencia */
-            background-image: url('https://i.ibb.co/3Wf4b7Z/card-bg-ref.png'); /* Base texturizada */
-            background-color: #a4c2f4;
-            background-size: cover;
-            background-position: center;
+            /* Fondo realista texturizado con ondas y degradados azules idénticos */
+            background: radial-gradient(circle at 70% 30%, rgba(180, 210, 245, 0.9) 0%, rgba(120, 165, 215, 0.95) 50%, rgba(90, 135, 185, 1) 100%),
+                        repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0, rgba(255,255,255,0.08) 2px, transparent 0, transparent 4px);
             border: 2px solid #2c3e50;
             border-radius: 12px;
             position: relative;
             box-sizing: border-box;
             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
             overflow: hidden;
-            font-family: 'Caveat', cursive; /* Fuente manuscrita idéntica a la app original */
+            font-family: 'Caveat', cursive;
         }
 
-        /* Título superior idéntico */
+        /* Trama de seguridad estilo ondas/líneas en el fondo */
+        .card-bg-waves {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-radial-gradient(circle at 20% 50%, transparent 0, transparent 20px, rgba(255, 255, 255, 0.15) 21px, transparent 22px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
         .id-title-container {
             position: absolute;
-            top: 14px;
-            left: 20px;
-            right: 20px;
+            top: 12px;
+            left: 15px;
+            right: 15px;
             text-align: center;
-            border-bottom: 2px solid #222;
+            border-bottom: 2.5px solid #1a252f;
             padding-bottom: 2px;
+            z-index: 3;
         }
 
         .id-title-text {
-            font-size: 18px;
+            font-size: 19px;
             font-weight: bold;
             color: #111;
             letter-spacing: 1px;
+            font-family: Arial, sans-serif;
         }
         .id-title-text span {
+            font-style: italic;
             font-weight: normal;
+            color: #222;
         }
 
         /* Foto de la credencial */
         .id-photo-box {
             position: absolute;
-            top: 55px;
-            left: 20px;
+            top: 52px;
+            left: 15px;
             width: 85px;
             height: 105px;
-            border: 1.5px solid #222;
-            background: #ccc;
+            border: 1.5px solid #1a252f;
+            background: #dcdcdc;
             object-fit: cover;
             display: flex;
             align-items: center;
@@ -153,27 +166,30 @@
             font-size: 12px;
             color: #444;
             font-family: Arial, sans-serif;
+            z-index: 3;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Campos de texto alineados exactamente como en la foto */
-        .field-name { position: absolute; top: 58px; left: 120px; font-size: 20px; color: #111; }
-        .field-dob { position: absolute; top: 88px; left: 120px; font-size: 20px; color: #111; }
-        .field-address { position: absolute; top: 118px; left: 120px; font-size: 20px; color: #111; width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .field-mobile { position: absolute; top: 148px; left: 120px; font-size: 20px; color: #111; }
+        /* Campos de texto con la fuente manuscrita idéntica */
+        .field-name { position: absolute; top: 52px; left: 112px; font-size: 21px; color: #111; z-index: 3; }
+        .field-dob { position: absolute; top: 81px; left: 112px; font-size: 21px; color: #111; z-index: 3; }
+        .field-address { position: absolute; top: 110px; left: 112px; font-size: 21px; color: #111; width: 235px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; z-index: 3; }
+        .field-mobile { position: absolute; top: 139px; left: 112px; font-size: 21px; color: #111; z-index: 3; }
 
-        .field-country { position: absolute; top: 172px; left: 20px; font-size: 19px; color: #111; }
-        .field-issue { position: absolute; top: 195px; left: 20px; font-size: 19px; color: #111; }
-        .field-expiry { position: absolute; top: 195px; left: 180px; font-size: 19px; color: #111; }
+        .field-country { position: absolute; top: 172px; left: 15px; font-size: 20px; color: #111; z-index: 3; }
+        .field-issue { position: absolute; top: 196px; left: 15px; font-size: 20px; color: #111; z-index: 3; }
+        .field-expiry { position: absolute; top: 196px; left: 175px; font-size: 20px; color: #111; z-index: 3; }
 
-        /* Sello VERIFIED con estrellas idéntico a la referencia */
+        /* Sello VERIFIED SVG idéntico con estrellas y texto curvo */
         .verified-badge {
             position: absolute;
-            bottom: 5px;
-            right: 10px;
-            width: 125px;
-            height: 125px;
+            bottom: -5px;
+            right: 5px;
+            width: 135px;
+            height: 135px;
             pointer-events: none;
-            opacity: 0.85;
+            opacity: 0.82;
+            z-index: 2;
         }
 
         /* Botón Circular Único */
@@ -256,6 +272,9 @@
         
         <div class="card-preview-container">
             <div class="id-card" id="cardCapture">
+                <!-- Fondo con ondas y tramas de seguridad internas -->
+                <div class="card-bg-waves"></div>
+
                 <!-- Título principal -->
                 <div class="id-title-container">
                     <div class="id-title-text">DRIVER LICENSE <span>INTERNATIONAL</span></div>
@@ -264,7 +283,7 @@
                 <!-- Foto -->
                 <div id="photoContainer" class="id-photo-box">Sin foto</div>
 
-                <!-- Campos de texto posicionados exactamente como en la muestra -->
+                <!-- Campos de texto posicionados milimétricamente con fuente manuscrita -->
                 <div class="field-name"><strong>Name:</strong> <span id="prevName"></span></div>
                 <div class="field-dob"><strong>DOB:</strong> <span id="prevDob"></span></div>
                 <div class="field-address"><strong>Address:</strong> <span id="prevAddress"></span></div>
@@ -279,13 +298,12 @@
                     <defs>
                         <path id="curvePath" d="M 20, 75 a 55,55 0 1,1 110,0 a 55,55 0 1,1 -110,0" />
                     </defs>
-                    <circle cx="75" cy="75" r="58" fill="none" stroke="#355b99" stroke-width="2" stroke-dasharray="4,4" opacity="0.6"/>
-                    <circle cx="75" cy="75" r="50" fill="none" stroke="#355b99" stroke-width="1.5" opacity="0.7"/>
-                    <!-- Estrellas y texto curvado -->
-                    <text font-size="11" fill="#355b99" font-weight="bold" opacity="0.8">
+                    <circle cx="75" cy="75" r="58" fill="none" stroke="#2a4d7d" stroke-width="2" stroke-dasharray="4,4" opacity="0.7"/>
+                    <circle cx="75" cy="75" r="50" fill="none" stroke="#2a4d7d" stroke-width="1.5" opacity="0.8"/>
+                    <text font-size="11" fill="#2a4d7d" font-weight="bold" opacity="0.9">
                         <textPath href="#curvePath" startOffset="0%">★ VERIFIED ★ VERIFIED ★ VERIFIED</textPath>
                     </text>
-                    <text x="75" y="80" font-size="18" font-weight="bold" fill="#355b99" text-anchor="middle" letter-spacing="2" transform="rotate(-20 75 75)">VERIFIED</text>
+                    <text x="75" y="80" font-size="19" font-weight="bold" fill="#2a4d7d" text-anchor="middle" letter-spacing="2.5" transform="rotate(-20 75 75)">VERIFIED</text>
                 </svg>
             </div>
         </div>
